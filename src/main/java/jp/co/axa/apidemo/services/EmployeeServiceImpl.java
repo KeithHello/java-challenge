@@ -15,7 +15,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    public List<Employee> retrieveEmployees() {
+    public List<Employee> getAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
         return employees;
     }
@@ -34,6 +34,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public void updateEmployee(Employee employee) {
-        employeeRepository.save(employee);
+        boolean exists = employeeRepository.existsById(employee.getId());
+
+        if (!exists) {
+            throw new NotFound("Employee not found");
+        } else {
+            employeeRepository.save(employee);
+        }
     }
 }

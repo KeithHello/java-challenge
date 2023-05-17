@@ -1,7 +1,9 @@
 package jp.co.axa.apidemo.controllers;
 
 import jp.co.axa.apidemo.entities.Employee;
+import jp.co.axa.apidemo.entities.EmployeeSave;
 import jp.co.axa.apidemo.services.EmployeeService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +16,11 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    public void setEmployeeService(EmployeeService employeeService) {
-        this.employeeService = employeeService;
-    }
+    private ModelMapper modelMapper = new ModelMapper();
 
     @GetMapping("/employees")
     public List<Employee> getEmployees() {
-        List<Employee> employees = employeeService.retrieveEmployees();
+        List<Employee> employees = employeeService.getAllEmployees();
         return employees;
     }
 
@@ -30,8 +30,8 @@ public class EmployeeController {
     }
 
     @PostMapping("/employees")
-    public void saveEmployee(Employee employee) {
-        employeeService.saveEmployee(employee);
+    public void saveEmployee(EmployeeSave employee) {
+        employeeService.saveEmployee(modelMapper.map(employee, Employee.class));
         System.out.println("Employee Saved Successfully");
     }
 
