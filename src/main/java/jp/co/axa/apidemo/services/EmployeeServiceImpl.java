@@ -3,38 +3,56 @@ package jp.co.axa.apidemo.services;
 import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.exceptions.NotFound;
 import jp.co.axa.apidemo.repositories.EmployeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
+    @Cacheable("employees")
     public List<Employee> getAllEmployees() {
-        List<Employee> employees = employeeRepository.findAll();
-        return employees;
+        return employeeRepository.findAll();
     }
 
+    @Cacheable(value = "employee", key = "#employeeId")
     public Employee getEmployee(Long employeeId) {
-        Optional<Employee> optEmp = Optional.ofNullable(employeeRepository.findById(employeeId).orElseThrow(() -> new NotFound("Employee not found")));
-        return optEmp.get();
+        Optional<Employee> optEmp = employeeRepository.findById(employeeId);
+
+        if (!optEmp.isPresent()) {
+            throw new NotFound("Employee not found");
+        } else {
+            return optEmp.get();
+        }
     }
 
+    @Cacheable(value = "employee", key = "#employee.id")
     public void saveEmployee(Employee employee) {
         employeeRepository.save(employee);
     }
 
+    @CacheEvict(value = "employee", key = "#employeeId")
     public void deleteEmployee(Long employeeId) {
-        employeeRepository.deleteById(employeeId);
+        boolean exists = employeeRepository.existsById(employeeId);
+
+        if (!exists) {
+            throw new NotFound("Employee not found");
+        } else {
+            employeeRepository.deleteById(employeeId);
+        }
     }
 
-    public void updateEmployee(Employee employee) {
-        boolean exists = employeeRepository.existsById(employee.getId());
+    @CachePut(value = "employee", key = "#employeeId")
+    public void updateEmployee(Long employeeId, Employee employee) {
+        boolean exists = employeeRepository.existsById(employeeId);
 
         if (!exists) {
             throw new NotFound("Employee not found");

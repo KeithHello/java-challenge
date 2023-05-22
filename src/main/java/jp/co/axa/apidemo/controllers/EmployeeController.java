@@ -3,25 +3,24 @@ package jp.co.axa.apidemo.controllers;
 import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.entities.EmployeeSave;
 import jp.co.axa.apidemo.services.EmployeeService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
+@RequiredArgsConstructor
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
-    private ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper;
 
     @GetMapping("/employees")
     public List<Employee> getEmployees() {
-        List<Employee> employees = employeeService.getAllEmployees();
-        return employees;
+        return employeeService.getAllEmployees();
     }
 
     @GetMapping("/employees/{employeeId}")
@@ -44,11 +43,8 @@ public class EmployeeController {
     @PutMapping("/employees/{employeeId}")
     public void updateEmployee(@RequestBody Employee employee,
                                @PathVariable(name = "employeeId") Long employeeId) {
-        Employee emp = employeeService.getEmployee(employeeId);
-        if (emp != null) {
-            employeeService.updateEmployee(employee);
-        }
-
+        employeeService.updateEmployee(employeeId, employee);
+        System.out.println("Employee Updated Successfully");
     }
 
 }
