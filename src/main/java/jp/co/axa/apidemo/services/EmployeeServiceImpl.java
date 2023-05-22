@@ -18,7 +18,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    @Cacheable("employees")
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
@@ -34,9 +33,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
-    @Cacheable(value = "employee", key = "#employee.id")
-    public void saveEmployee(Employee employee) {
-        employeeRepository.save(employee);
+    public Employee saveEmployee(Employee employee) {
+        Employee savedEmployee = employeeRepository.save(employee);
+        return updateEmployeeCache(savedEmployee);
     }
 
     @CacheEvict(value = "employee", key = "#employeeId")
@@ -51,13 +50,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @CachePut(value = "employee", key = "#employeeId")
-    public void updateEmployee(Long employeeId, Employee employee) {
+    public Employee updateEmployee(Long employeeId, Employee employee) {
         boolean exists = employeeRepository.existsById(employeeId);
 
         if (!exists) {
             throw new NotFound("Employee not found");
         } else {
-            employeeRepository.save(employee);
+            return employeeRepository.save(employee);
         }
+    }
+
+    @CachePut(value = "employee", key = "#employee.id")
+    private Employee updateEmployeeCache(Employee employee) {
+        return employee;
     }
 }

@@ -29,7 +29,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/employees")
-    public void saveEmployee(EmployeeSave employee) {
+    public void saveEmployee(@RequestBody EmployeeSave employee) {
         employeeService.saveEmployee(modelMapper.map(employee, Employee.class));
         System.out.println("Employee Saved Successfully");
     }
@@ -41,10 +41,9 @@ public class EmployeeController {
     }
 
     @PutMapping("/employees/{employeeId}")
-    public void updateEmployee(@RequestBody Employee employee,
-                               @PathVariable(name = "employeeId") Long employeeId) {
+    public void updateEmployee(@PathVariable(name = "employeeId") Long employeeId,
+                               @RequestBody Employee employee) {
         employeeService.updateEmployee(employeeId, employee);
         System.out.println("Employee Updated Successfully");
     }
-
 }

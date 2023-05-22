@@ -107,10 +107,12 @@ public class EmployeeServiceImplTest {
         when(employeeRepository.save(employee)).thenReturn(employee);
 
         // run
-        target.saveEmployee(employee);
+        Employee actual = target.saveEmployee(employee);
 
         // verify
         verify(employeeRepository, times(1)).save(employee);
+
+        assertEquals(employee, actual);
     }
 
     @Test
@@ -146,11 +148,13 @@ public class EmployeeServiceImplTest {
         when(employeeRepository.save(employee)).thenReturn(employee);
 
         // run
-        target.updateEmployee(1L, employee);
+        Employee actual = target.updateEmployee(1L, employee);
 
         // verify
         verify(employeeRepository, times(1)).existsById(1L);
         verify(employeeRepository, times(1)).save(employee);
+
+        assertEquals(employee, actual);
     }
 
     @Test(expected = NotFound.class)
