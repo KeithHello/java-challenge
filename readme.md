@@ -49,3 +49,30 @@ Please let us know more about your Java experience in a few sentences. For examp
 - I have 3 years experience in Java and I started to use Spring Boot from last year
 - I'm a beginner and just recently learned Spring Boot
 - I know Spring Boot very well and have been using it for many years
+
+# My Information
+
+## Name
+
+Li Hongji
+
+## What I have done
+
+- modify the API and repository
+- add API Key for authentication
+  - right now just any request containing X-API-KEY with a corresponding value is fine
+- add cache logic for database layer
+- add comments for the new added source
+- add unit test for service level
+  - mainly my experience is about JUnit 5 but I adjust the source here for JUnit 4
+- add exception handler to handle the case for no result
+- add entity for save API
+  - because entity for save API doesn't need to set ID
+- use Lambok to generate Getter & Setter, Equals and Hash
+- use Model Mapper to map values for entities
+
+## My Experience
+
+I have 3 years experience in Java and I have used Spring Boot for 2 years.
+
+I learn Java and Spring Boot basically by work and self-learning.
